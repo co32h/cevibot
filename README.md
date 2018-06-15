@@ -70,4 +70,9 @@ jarファイルの入っているフォルダを削除してください。<br>
 　公開<br>
 <br>
 <br>
-以上<br>
+[作成者へのコンタクト]<br>
+Twitter : @hinyari_tumetai<br>
+Discord : Hinyari#1749<br>
+<br>
+<br>
+以上

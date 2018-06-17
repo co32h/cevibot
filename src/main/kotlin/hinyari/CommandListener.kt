@@ -22,7 +22,8 @@ class CommandListener(mainChIn : TextChannel, prefixIn : String, joinVCIdIn : St
     private val tm = TrackManager()
     private val ap = tm.setup()
 
-    private val tts = TTS(mainCh, prefix, targetChId, tm, ap)
+    private val tts = Tts(mainCh, prefix, targetChId, tm, ap)
+    private val sePlayer = SePlayer(mainCh, targetChId, tm, ap)
 
     override fun onMessageReceived(event : MessageReceivedEvent) {
 
@@ -80,6 +81,7 @@ class CommandListener(mainChIn : TextChannel, prefixIn : String, joinVCIdIn : St
                                         am.openAudioConnection(it)
                                         am.sendingHandler = AudioPlayerSendHandler(ap)
                                         event.jda.addEventListener(tts)
+                                        event.jda.addEventListener(sePlayer)
                                         event.jda.removeEventListener(this)
                                         return
                                     }
@@ -98,6 +100,7 @@ class CommandListener(mainChIn : TextChannel, prefixIn : String, joinVCIdIn : St
                             am.openAudioConnection(it)
                             am.sendingHandler = AudioPlayerSendHandler(ap)
                             event.jda.addEventListener(tts)
+                            event.jda.addEventListener(sePlayer)
                             return
                         }
                     }
@@ -112,6 +115,7 @@ class CommandListener(mainChIn : TextChannel, prefixIn : String, joinVCIdIn : St
                     mainCh.sendMessage("ボイスチャンネルから退室します").queue()
                     am.closeAudioConnection()
                     event.jda.removeEventListener(tts)
+                    event.jda.removeEventListener(sePlayer)
                 }
             }
 
@@ -129,7 +133,6 @@ class CommandListener(mainChIn : TextChannel, prefixIn : String, joinVCIdIn : St
                 castList += "```"
 
                 mainCh.sendMessage(castList).queue()
-
             }
         }
     }

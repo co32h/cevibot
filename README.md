@@ -62,8 +62,8 @@ cevibot<br>
 [SE設定]<br>
 CSVファイルの形式に従い、「絵文字のコード名,再生する音源のソースの絶対パス」と各行に入力してください。また、絶対パスのバックスラッシュは2つ重ねてください。<br>
 --------------例--------------<br>
-grinning,C:\\test\\grinning.mp4<br>
-thinking,C:\\Users\\test\\kangaeru.mp4<br>
+grinning,C:\\\test\\\grinning.mp4<br>
+thinking,C:\\\Users\\\test\\\kangaeru.mp4<br>
 -----------例おわり-----------<br>
 カスタム絵文字にも対応しています。<br>
 <br>

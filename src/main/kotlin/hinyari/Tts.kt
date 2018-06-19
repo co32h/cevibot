@@ -92,11 +92,10 @@ class Tts(mainChIn : TextChannel, prefixIn : String, targetChIdIn : String, tmIn
 
             talker.setCast(castList.At(Random().nextInt(castList.getLength())))
 
-            talker.OutputWaveToFile(messageIn, wavPath)
-
-            ap.volume = 50
-            tm.play(wavPath)
-
+            if (talker.OutputWaveToFile(messageIn, wavPath)) {
+                ap.volume = 50
+                tm.play(wavPath)
+            }
         } catch (ex : UndeclaredThrowableException) {
             //無視
         } catch (ex : Exception) {

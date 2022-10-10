@@ -1,4 +1,4 @@
-package u2ny9.audio
+package co32h.audio
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame

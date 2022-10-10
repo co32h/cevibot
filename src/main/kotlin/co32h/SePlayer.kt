@@ -1,20 +1,22 @@
-package u2ny9
+package co32h
 
 import com.opencsv.CSVReader
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
-import u2ny9.audio.TrackManager
-import net.dv8tion.jda.api.entities.TextChannel
+import co32h.audio.TrackManager
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.util.logging.Logger
 
-class SePlayer(loggerIn : Logger, mainChIn : TextChannel, targetChIdIn : String, tmIn : TrackManager, apIn : AudioPlayer) : ListenerAdapter() {
+class SePlayer(loggerIn : Logger,
+               speeChIn : MessageChannel,
+               tmIn : TrackManager,
+               apIn : AudioPlayer) : ListenerAdapter() {
 
     private val logger = loggerIn
-    private val mainCh = mainChIn
-    private val targetChId = targetChIdIn
+    private val speeCh = speeChIn
     private val tm = tmIn
     private val ap = apIn
 
@@ -35,7 +37,7 @@ class SePlayer(loggerIn : Logger, mainChIn : TextChannel, targetChIdIn : String,
             pairList
         } catch (ex : Exception) {
 
-            mainCh.sendMessage("${path}が見つかりませんでした").queue()
+            speeCh.sendMessage("${path}が見つかりませんでした").queue()
             null
         }
     }
@@ -43,7 +45,7 @@ class SePlayer(loggerIn : Logger, mainChIn : TextChannel, targetChIdIn : String,
     override fun onMessageReactionAdd(event : MessageReactionAddEvent) {
 
         if (event.member!!.user.isBot
-                or (event.channel != event.jda.getTextChannelById(targetChId))
+                or (event.channel != speeCh)
                 or !event.channelType.isGuild
                 or (emojiSePair == null)) return
 
@@ -52,14 +54,14 @@ class SePlayer(loggerIn : Logger, mainChIn : TextChannel, targetChIdIn : String,
         try {
             for (i in emojiSePair.indices) {
 
-                if (event.reactionEmote.name == emojiSePair[i][0]) {
+                if (event.emoji.name == emojiSePair[i][0]) {
 
                     ap.volume = 10
                     tm.play(emojiSePair[i][1], logger)
                 }
             }
         } catch (ex : Exception) {
-            mainCh.sendMessage("エラーが発生しました${System.lineSeparator()}`$ex`").queue()
+            speeCh.sendMessage("エラーが発生しました${System.lineSeparator()}`$ex`").queue()
         }
     }
 }

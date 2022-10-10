@@ -1,12 +1,11 @@
-package u2ny9
+package co32h
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sun.jna.platform.win32.COM.util.Factory
-import u2ny9.audio.TrackManager
-import u2ny9.cs.ITalker
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
+import co32h.audio.TrackManager
+import co32h.cs.ITalker
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import java.lang.reflect.UndeclaredThrowableException
@@ -14,58 +13,36 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class Tts(loggerIn : Logger, mainChIn : TextChannel, prefixIn : String, targetChIdIn : String, tmIn : TrackManager, apIn : AudioPlayer, joinVCIdIn : String) : ListenerAdapter() {
+class Tts(loggerIn : Logger,
+          speeChIn : MessageChannel,
+          tmIn : TrackManager,
+          apIn : AudioPlayer) : ListenerAdapter() {
 
     private val logger = loggerIn
-    private val mainCh = mainChIn
-    private val prefix = prefixIn
-    private val targetChId = targetChIdIn
+    private val speeCh = speeChIn
     private val tm = tmIn
     private val ap = apIn
-    private val joinVCId = joinVCIdIn
 
     private val wavPath = "cevibot/temp/message.wav"
 
     override fun onMessageReceived(event : MessageReceivedEvent) {
 
-        if (event.author.isBot
-                or !event.channelType.isGuild
-                or event.message.contentRaw.startsWith(prefix)) return
-
-        if (targetChId != "") {
-
-            try {
-                val targetCh = event.jda.getTextChannelById(targetChId)
-                if (event.channel == targetCh) {
-                    speak(checkMessage(event.message.contentRaw))
-                }
-            } catch (ex : Exception) {
-                logger.log(Level.WARNING, "targetChIdが不正", ex)
-                mainCh.sendMessage("targetChIdが不正な値です${System.lineSeparator()}コンフィグファイルを見直してください").queue()
-            }
-        } else {
-            speak(checkMessage(event.message.contentRaw))
+        if (event.channel == speeCh) {
+            speak(checkMessage(event.message.contentDisplay))
         }
     }
 
-    override fun onGuildVoiceJoin(event : GuildVoiceJoinEvent) {
-
-        if (event.channelJoined.id != joinVCId) return
+    override fun onGuildVoiceUpdate(event : GuildVoiceUpdateEvent) {
 
         var memberName = event.member.user.name
         if (event.member.nickname != null) memberName = event.member.nickname!!
 
-        speak(memberName + "が参加しました")
-    }
-
-    override fun onGuildVoiceLeave(event : GuildVoiceLeaveEvent) {
-
-        if (event.channelLeft.id != joinVCId) return
-
-        var memberName = event.member.user.name
-        if (event.member.nickname != null) memberName = event.member.nickname!!
-
-        speak(memberName + "が退出しました")
+        speak(
+            when {
+                event.channelJoined != null -> memberName + "が参加しました"
+                else -> memberName + "が退出しました"
+            }
+        )
     }
 
     private fun checkMessage(messageIn : String) : String {
@@ -106,7 +83,7 @@ class Tts(loggerIn : Logger, mainChIn : TextChannel, prefixIn : String, targetCh
             logger.log(Level.WARNING, "読み上げでエラーが発生しました1", ex)
         } catch (ex : Exception) {
             logger.log(Level.WARNING, "読み上げでエラーが発生しました", ex)
-            mainCh.sendMessage("エラーが発生しました${System.lineSeparator()}開発者に問題を報告してください${System.lineSeparator()}`$ex`").queue()
+            speeCh.sendMessage("エラーが発生しました${System.lineSeparator()}開発者に問題を報告してください${System.lineSeparator()}`$ex`").queue()
         }
     }
 }

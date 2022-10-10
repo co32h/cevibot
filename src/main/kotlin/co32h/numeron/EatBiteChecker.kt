@@ -1,4 +1,4 @@
-package u2ny9.numeron
+package co32h.numeron
 
 class EatBiteChecker(playerAnswerIn : String, variableListIn : List<String>) {
 
